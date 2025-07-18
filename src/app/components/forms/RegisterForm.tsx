@@ -1,11 +1,12 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
 import { useState } from 'react';
 import { useUser } from '@/app/user-provider';
 import { useRouter } from 'next/navigation';
 import API from '@/app/lib/axios';
+import Notification from '../ui/Notification';
+import { AxiosError } from 'axios';
 
 type FormData = {
   email: string;
@@ -20,20 +21,33 @@ export default function RegisterForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>();
-  const [message, setMessage] = useState('');
   const {setUser} = useUser();
   const router = useRouter();
+  const [isError, setIsError] = useState(false);
+  const [message, setMessage] = useState('');
 
   const onSubmit = async (data: FormData) => {
     try {
-      const {data: {token, user}} = await API.post('/auth/register', data);
+      const {data: {user}} = await API.post('/auth/register', data);
       setMessage('Resistration is success!');
+      
+      localStorage.setItem('user', JSON.stringify(user));
       setUser(user)
-      router.push('/recipes');
-    } catch (err: any) {
-      setMessage(err.response?.data?.message || 'Error');
-    }
-  };
+      setTimeout(() => {
+        router.push('/recipes');
+      }, 3000)
+    } catch (err: unknown) {
+      const axiosErr = err as AxiosError<{ message: string }>;
+
+      setIsError(true)
+      setMessage(axiosErr.response?.data?.message || 'Failed to regist');
+    } finally{
+      setTimeout(() => {
+        setMessage('')
+        setIsError(false)
+      }, 3000)
+    };
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -90,7 +104,7 @@ export default function RegisterForm() {
       </a>
 
 
-      {message && <p className="text-center text-sm mt-2">{message}</p>}
+      {message && <Notification message={message} error={isError}/>}
     </form>
   );
 }

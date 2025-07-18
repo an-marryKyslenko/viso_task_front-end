@@ -1,7 +1,8 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { User } from './types';
+import API from './lib/axios';
 
 type UserContextType = {
 	user: User | null;
@@ -18,8 +19,18 @@ const UserContext = createContext<UserContextType>({
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 	const [user, setUser] = useState<User | null>(null);
 
-	const logout = () => {
+	useEffect(() => {
+		const data = JSON.parse(localStorage.getItem('user') || '{}');
+
+		if(data) {
+			setUser(data)
+		}
+	}, [])
+
+	const logout = async() => {
+		await API.post('/auth/logout');
 		setUser(null);
+		localStorage.removeItem('token');
 	}
 	return (
 		<UserContext.Provider value={{ 
