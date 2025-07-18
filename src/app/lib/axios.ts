@@ -23,11 +23,7 @@ API.interceptors.response.use(
 			isRefreshing = true;
 
 			try {
-			const refreshRes = await API.post('/auth/refresh');
-			const newToken = refreshRes.data.accessToken;
-
-			API.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-			originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+			await API.post('/auth/refresh');
 
 			return API(originalRequest);
 			} catch (refreshErr) {
