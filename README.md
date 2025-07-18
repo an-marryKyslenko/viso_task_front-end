@@ -1,39 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FlavorAI Frontend
+
+	This is the client-side of the VISO recipe app, built with **Next.js 15** and fully integrated with cookie-based authentication via SSR and client components. Users can view recipes, leave comments, and interact securely with the backend.
+
+## Links
+	
+	- Demo [flavorAI](https://flavorai.vercel.app/)
+
+	- Backend [repo](https://github.com/an-marryKyslenko/viso_task_back-end)
+
+## 🧰 Tech Stack
+
+- Next.js 15 with App Router
+- TypeScript
+- TailwindCSS
+- Axios with `withCredentials`
+- SSR Cookie Authentication
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/yourusername/viso_task_front-end.git
+
+2. Install dependencies:
+
+```bash
+npm install
+Add your environment config:
+```
+
+3. Run locally:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Authentication
 
-## Link to back-end repo 
-Open [viso_task_back-end](https://github.com/an-marryKyslenko/viso_task_back-end)
+- Access and Refresh tokens stored in secure HTTP-only cookies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Automatic token refresh on 401 via /auth/refresh
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Client fetch uses Axios with withCredentials: true
 
-## Learn More
+- SSR fetch uses headers() to access cookies from incoming requests
 
-To learn more about Next.js, take a look at the following resources:
+## Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Recipe listing with SSR
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Commenting system with auto refresh
 
-## Deploy on Vercel
+- Cookie-based secure authentication
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Dynamic metadata with generateMetadata
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Error handling and toast notifications
+
+##END
