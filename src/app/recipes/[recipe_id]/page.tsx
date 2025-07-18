@@ -35,7 +35,7 @@ export default async function RecipePage({params}: {params: {recipe_id: string}}
 					Author: <code>{recipe.userId}</code>
 				</div>
 
-				<DeleteControl recipeId={recipe.id}/>
+				<DeleteControl recipeId={recipe.id} userId={recipe.userId}/>
 			</section>
 
 			<section className='bg-white/70 rounded-lg p-4 md:p-10 '>

@@ -1,16 +1,18 @@
 'use client'
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 
 type Props = {
-	addComment: (text: string) => void
+	addComment: (text: string) => Promise<void>
 }
 
 const CommentForm = ({addComment}: Props) => {
 	const [text, setText] = useState('');
 	
-	const onSubmit = async () => {
-		addComment(text)
+	const onSubmit = async (e: FormEvent) => {
+		e.preventDefault();
+		await addComment(text);
+		setText('');
 	}
 	return (
 		<form onSubmit={onSubmit} className="mt-6 space-y-2">

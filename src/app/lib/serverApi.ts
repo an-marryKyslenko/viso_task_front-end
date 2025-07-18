@@ -1,40 +1,45 @@
-import axios from "axios";
-import { cookies } from 'next/headers';
+import axios from 'axios';
+import { headers } from 'next/headers';
 
 export async function fetchWithToken(endpoint: string) {
-	const cookieStore = await cookies();
-	const accessToken = cookieStore.get('access_token')?.value;
-	const refreshToken = cookieStore.get('refresh_token')?.value;
+  const headerStore = headers();
+  const cookieHeader = (await headerStore).get('cookie')
 
-	try {
-		const res = await axios.get(endpoint, {
-			baseURL: 'https://viso-task-back-end.onrender.com',
-			headers: {
-			Authorization: `Bearer ${accessToken}`,
-			},
-		});
+  try {
+    const res = await axios.get(endpoint, {
+      baseURL: 'https://viso-task-back-end.onrender.com',
+      headers: {
+        Cookie: cookieHeader || '',
+      },
+    });
 
-		return res.data;
-	} catch (err: any) {
-		if (axios.isAxiosError(err) && err.response?.status === 401 && refreshToken) {
-			const refreshRes = await axios.post('https://viso-task-back-end.onrender.com/auth/refresh', null, {
-			headers: {
-				Cookie: `refresh_token=${refreshToken}`,
-			},
-			});
+    return res.data;
+  } catch (err: any) {
+    const isAuthError = axios.isAxiosError(err) && err.response?.status === 401;
 
-			const newAccessToken = refreshRes.data.accessToken;
+    if (isAuthError && cookieHeader?.includes('refresh_token')) {
+      try {
+        await axios.post('https://viso-task-back-end.onrender.com/auth/refresh', null, {
+          headers: {
+            Cookie: cookieHeader,
+          },
+          withCredentials: true,
+        });
 
-			const retryRes = await axios.get(endpoint, {
-			baseURL: 'https://viso-task-back-end.onrender.com',
-			headers: {
-				Authorization: `Bearer ${newAccessToken}`,
-			},
-			});
+        const retryRes = await axios.get(endpoint, {
+          baseURL: 'https://viso-task-back-end.onrender.com',
+          headers: {
+            Cookie: cookieHeader,
+          },
+        });
 
-			return retryRes.data;
-		}
+        return retryRes.data;
+      } catch (refreshErr) {
+        console.error('SSR Refresh failed:', refreshErr);
+        throw refreshErr;
+      }
+    }
 
-		throw err;
-	}
+    throw err;
+  }
 }

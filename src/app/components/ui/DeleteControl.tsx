@@ -4,13 +4,21 @@ import { useState } from "react";
 import Modal from "../layout/Modal";
 import { useRouter } from "next/navigation";
 import API from "@/app/lib/axios";
+import { useUser } from "@/app/user-provider";
 
 type Props = {
-	recipeId: string
+	recipeId: string;
+	userId: string;
 }
-const DeleteControl = ({recipeId}: Props) => {
+
+const DeleteControl = ({recipeId, userId}: Props) => {
 	const [open, setOpen] = useState(false);
 	const route = useRouter();
+	const { user } = useUser()
+	
+	if (user?.id !== userId) {
+		return;
+	}
 	
 	const handleDelete = async () => {
 		try {

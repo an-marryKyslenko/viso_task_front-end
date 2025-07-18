@@ -28,8 +28,8 @@ API.interceptors.response.use(
 			return API(originalRequest);
 			} catch (refreshErr) {
 				isRefreshing = false;
-			console.error('Refresh failed:', refreshErr);
-			return Promise.reject(refreshErr);
+				console.error('Refresh failed:', refreshErr);
+				return Promise.reject(refreshErr);
 			}
 		}
 

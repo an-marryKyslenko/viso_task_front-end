@@ -33,7 +33,7 @@ export default function LoginForm() {
 			localStorage.setItem('user', JSON.stringify(user));
 
 			setTimeout(() => {
-				router.push('/recipes');
+				router.push('/recipes/debag');
 			}, 3000)
 		} catch (err: any) {
 			setIsError(true)
