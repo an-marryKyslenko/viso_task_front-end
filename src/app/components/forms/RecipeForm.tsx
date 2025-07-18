@@ -2,24 +2,32 @@
 
 import { useForm, useFieldArray } from 'react-hook-form';
 import { useRouter } from 'next/navigation';
-import API from '@/app/lib/axios';
 import { useUser } from '@/app/user-provider';
+import { RecipeFormValues } from '@/app/types';
+import API from '@/app/lib/axios';
+import { IoMdClose } from "react-icons/io"; 
+import { useState } from 'react';
+import Notification from '../ui/Notification';
 
-type RecipeFormValues = {
-	title: string;
-	description: string;
-	time: string;
-	ingredients: { name: string }[];
-	instructions: string;
-};
+type Props = {
+	mode: "create" | "edit";
+	handleClose?: () => void;
+	defaultValues?: Partial<RecipeFormValues>;
+	recipeId?: string;
+}
 
-export default function AddRecipeForm() {
+const initialsValue = {
+	ingredients: [{ name: '' }],
+
+}
+
+export default function RecipeForm({mode = 'create', handleClose = () => {}, defaultValues = initialsValue, recipeId}: Props) {
 	const { register, control, handleSubmit } = useForm<RecipeFormValues>({
-		defaultValues: {
-			ingredients: [{ name: '' }],
-		},
+		defaultValues
 	});
 	const {user} = useUser();
+	const [isError, setIsError] = useState(false);
+	const [message, setMessage] = useState('');
 
 	const { fields, append, remove } = useFieldArray({
 		control,
@@ -30,18 +38,37 @@ export default function AddRecipeForm() {
 
 	const onSubmit = async (data: RecipeFormValues) => {
 		try {
-			await API.post('/recipes', {
-				...data,
-				userId: user?.id
-			});
-			router.push('/my-recipes');
+			if(mode === 'create') {
+				await API.post('/recipes', {
+					...data,
+					userId: user?.id,
+				});
+				setMessage('Recipe was created successfully!')
+				router.push('/recipes/my-recipes');
+			} else {
+				await API.put(`/recipes/${recipeId}`, {
+					...data,
+					userId: user?.id,
+				});
+				handleClose()
+				router.push(`/recipes/${recipeId}`);
+				setMessage('Recipe was updated successfully!')
+	
+			}
 		} catch (error) {
-			console.error('Error submitting recipe:', error);
+			setMessage('Error submitting recipe:');
+			setIsError(true)
+		} finally{
+			setTimeout(() => {
+				setMessage('');
+				setIsError(false)
+			}, 3000)
 		}
 	};
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)} className="max-w-xl mx-auto p-6 space-y-4 bg-white/20 rounded shadow-md">
+		<>
+		<form onSubmit={handleSubmit(onSubmit)} className="max-w-xl mx-auto p-6 space-y-4">
 			<input
 			type="text"
 			{...register('title', { required: true })}
@@ -73,7 +100,7 @@ export default function AddRecipeForm() {
 					className="flex-1 px-3 py-2 border rounded"
 					/>
 					<button type="button" onClick={() => remove(index)} className="text-red-600 font-bold">
-					✖
+						<IoMdClose/>
 					</button>
 				</div>
 			))}
@@ -100,5 +127,7 @@ export default function AddRecipeForm() {
 			Submit Recipe
 			</button>
 		</form>
+		{message && <Notification message={message} error={isError}/>}
+		</>
 	);
 }

@@ -1,12 +1,10 @@
-'use client';
-
 import Link from 'next/link';
 
 export default function HomePage() {
   return (
     <div
       className="min-h-screen bg-cover bg-center relative"
-      style={{ backgroundImage: "url(/banner.jpg)" }} // replace with your image
+      style={{ backgroundImage: "url(/banner.jpg)" }}
     >
       <div className="absolute inset-0 bg-black/50 flex flex-col justify-center items-center text-white px-4 text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-4">

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useUser } from '@/app/user-provider';
 import { useRouter } from 'next/navigation';
 import API from '@/app/lib/axios';
+import Notification from '../ui/Notification';
 
 type LoginData = {
 	email: string;
@@ -20,16 +21,28 @@ export default function LoginForm() {
 	const [message, setMessage] = useState('');
 	const {setUser} = useUser();
 	const router = useRouter();
-
+	const [isError, setIsError] = useState(false);
+	
 	const onSubmit = async (data: LoginData) => {
 		try {
-			const {data: { user}} = await API.post('/auth/login', data);
+			const {data: {user}} = await API.post('/auth/login', data);
+			
 			setMessage('Login successful!');
 			setUser(user);
 
-			router.push('/recipes');
+			localStorage.setItem('user', JSON.stringify(user));
+
+			setTimeout(() => {
+				router.push('/recipes');
+			}, 3000)
 		} catch (err: any) {
+			setIsError(true)
 			setMessage(err.response?.data?.message || 'Login failed');
+		} finally{
+			setTimeout(() => {
+				setMessage('');
+				setIsError(false)
+			}, 3000)
 		}
 	};
 
@@ -69,7 +82,7 @@ export default function LoginForm() {
 				New here? Create an account to get started!
 			</a>
 
-			{message && <p className="text-center text-sm mt-2">{message}</p>}
+			{message && <Notification message={message} error={isError}/>}
 		</form>
 	);
 }

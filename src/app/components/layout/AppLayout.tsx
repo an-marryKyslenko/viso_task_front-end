@@ -8,7 +8,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 			<NavBar />
 			<main
 				className="min-h-screen bg-cover bg-center relative"
-				style={{ backgroundImage: "url('/banner.jpg')" }} // поклади зображення в public/
+				style={{ backgroundImage: "url('/banner.jpg')" }}
 			>
 				<div className="relative z-10 flex flex-col items-center justify-center text-white px-4 text-center py-20">
 					{children}
