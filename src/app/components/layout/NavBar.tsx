@@ -14,9 +14,9 @@ export default function Navbar() {
   }
   return (
     <nav className="bg-black/80 text-gray-300 px-6 py-4 flex items-center justify-between shadow-md">
-      <a href="/" className="font-semibold text-lg tracking-wide">
+      <Link href="/" className="font-semibold text-lg tracking-wide">
         Recipe Portal
-      </a>
+      </Link>
 
       <div className="space-x-6 hidden sm:flex">
         <Link href="/recipes" className="hover:text-white transition">All Recipes</Link>

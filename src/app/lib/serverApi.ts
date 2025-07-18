@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { headers } from 'next/headers';
 
 export async function fetchWithToken(endpoint: string) {
@@ -14,8 +14,9 @@ export async function fetchWithToken(endpoint: string) {
     });
 
     return res.data;
-  } catch (err: any) {
-    const isAuthError = axios.isAxiosError(err) && err.response?.status === 401;
+  } catch (err) {
+    const axiosErr = err as AxiosError<{ message: string }>;
+    const isAuthError = axios.isAxiosError(axiosErr) && axiosErr.response?.status === 401;
 
     if (isAuthError && cookieHeader?.includes('refresh_token')) {
       try {
@@ -40,6 +41,6 @@ export async function fetchWithToken(endpoint: string) {
       }
     }
 
-    throw err;
+    throw axiosErr;
   }
 }

@@ -6,6 +6,7 @@ import { useUser } from '@/app/user-provider';
 import { useRouter } from 'next/navigation';
 import API from '@/app/lib/axios';
 import Notification from '../ui/Notification';
+import { AxiosError } from 'axios';
 
 type FormData = {
   email: string;
@@ -35,9 +36,11 @@ export default function RegisterForm() {
       setTimeout(() => {
         router.push('/recipes');
       }, 3000)
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const axiosErr = err as AxiosError<{ message: string }>;
+
       setIsError(true)
-      setMessage(err.response?.data?.message || 'Error');
+      setMessage(axiosErr.response?.data?.message || 'Failed to regist');
     } finally{
       setTimeout(() => {
         setMessage('')

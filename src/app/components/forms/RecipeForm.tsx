@@ -8,6 +8,7 @@ import API from '@/app/lib/axios';
 import { IoMdClose } from "react-icons/io"; 
 import { useState } from 'react';
 import Notification from '../ui/Notification';
+import { AxiosError } from 'axios';
 
 type Props = {
 	mode: "create" | "edit";
@@ -55,8 +56,10 @@ export default function RecipeForm({mode = 'create', handleClose = () => {}, def
 				setMessage('Recipe was updated successfully!')
 	
 			}
-		} catch (error) {
-			setMessage('Error submitting recipe:');
+		} catch (err: unknown) {
+			const axiosErr = err as AxiosError<{ message: string }>;
+
+			setMessage(axiosErr.response?.data.message || 'Error submitting recipe:');
 			setIsError(true)
 		} finally{
 			setTimeout(() => {

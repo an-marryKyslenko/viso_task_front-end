@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react"
 import CommentForm from "../forms/CommentForm"
-import { CommentType, Recipe } from "@/app/types"
+import { CommentType } from "@/app/types"
 import API from "@/app/lib/axios"
 import Comment from "./Comment"
 import Notification from "./Notification"
+import { AxiosError } from "axios"
 
 type Props = {
 	recipeId: string,
@@ -20,8 +21,16 @@ const CommentsList = ({recipeId, userId}: Props) => {
 		try {
 			const {data} = await API.get('/comments');
 			setComments(data);
-		} catch (error) {
-			console.log(error)
+		} catch (err) {
+			const axiosErr = err as AxiosError<{ message: string }>;
+			
+			setMessage(axiosErr.response?.data.message || 'Cannot fetch comments');
+			setIsError(true);
+		} finally{
+			setTimeout(() => {
+				setMessage('');
+				setIsError(false)
+			}, 3000)
 		}
 	}
 
@@ -38,8 +47,9 @@ const CommentsList = ({recipeId, userId}: Props) => {
 			})
 			setMessage('Comment was added successfully!')
 			await fetchComments();
-		} catch (error) {
-			setMessage('Cannot add comment');
+		} catch (err) {
+			const axiosErr = err as AxiosError<{ message: string }>;
+			setMessage(axiosErr.response?.data.message || 'Cannot add comment');
 			setIsError(true);
 		} finally{
 			setTimeout(() => {
@@ -54,8 +64,10 @@ const CommentsList = ({recipeId, userId}: Props) => {
 			await API.delete(`/comments/${id}`)
 			await fetchComments();
 			setMessage('Comment was deleted successfully')
-		} catch (error) {
-			setMessage('Cannot delete comment');
+		} catch (err) {
+			const axiosErr = err as AxiosError<{ message: string }>;
+
+			setMessage(axiosErr.response?.data.message || 'Cannot delete comment');
 			setIsError(true)
 		} finally{
 			setTimeout(() => {

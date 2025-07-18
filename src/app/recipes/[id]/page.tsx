@@ -4,10 +4,15 @@ import EditControls from '@/app/components/ui/EditControls';
 import { fetchWithToken } from '@/app/lib/serverApi';
 import { Recipe } from '@/app/types';
 
-export default async function RecipePage({params}: {params: {recipe_id: string}}) {
-	const { recipe_id } = await params as {recipe_id: string};
+type PageProps = {
+	params: Promise<{ id: string }>
+};
 
-	const recipe: Recipe = await fetchWithToken(`/recipes/${recipe_id}`);
+export default async function Page({params}: PageProps) {
+	const { id } = await params;
+
+	console.log(params)
+	const recipe: Recipe = await fetchWithToken(`/recipes/${id}`);
 
 	if(!recipe) {
 		return <div>Not recipe</div>
