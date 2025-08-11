@@ -1,14 +1,13 @@
 # FlavorAI Frontend
 
-	This is the client-side of the VISO recipe app, built with **Next.js 15** and fully integrated with cookie-based authentication via SSR and client components. Users can view recipes, leave comments, and interact securely with the backend.
+This is the client-side of the VISO recipe app, built with **Next.js 15** and fully integrated with cookie-based authentication via SSR and client components. Users can view recipes, leave comments, and interact securely with the backend.
 
 ## Links
-	
-	- Demo [flavorAI](https://flavorai.vercel.app/)
+- Demo [flavorAI](https://flavorai.vercel.app/)
 
-	- Backend [repo](https://github.com/an-marryKyslenko/viso_task_back-end)
+- Backend [repo](https://github.com/an-marryKyslenko/flavorai_back-end)
 
-## 🧰 Tech Stack
+## Tech Stack
 
 - Next.js 15 with App Router
 - TypeScript
